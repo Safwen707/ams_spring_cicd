@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('tag and push image to dockerhub') {
+        stage('tag and push image to dockerhub2') {
             steps {
                 echo "tag and push image ..."
                 sh "docker tag safwen_amsdata_2025 safsaf707/safwen_amsdata_2025"

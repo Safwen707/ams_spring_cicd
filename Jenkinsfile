@@ -31,7 +31,7 @@ pipeline {
             steps {
                 echo "tag and push image ..."
                 sh "docker tag safwen_amsdata_2025 safsaf707/safwen_amsdata_2025"
-                sh "docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_Psw"
+                sh 'echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin'
                 sh "docker push safsaf707/safwen_amsdata_2025"
                 sh "docker logout"
             }

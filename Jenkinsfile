@@ -41,6 +41,7 @@ pipeline {
                 }
             }
         }
+    }
 
     post {
         success {
@@ -50,7 +51,7 @@ pipeline {
             echo "====++++success++++===="
         }
         failure {
-            echo 'Échec de la pipelin'
+            echo 'Échec de la pipeline'
             echo "====++++failed++++===="
             sh 'docker compose -f Docker-compose.yml logs || true'
         }

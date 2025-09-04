@@ -53,7 +53,7 @@ pipeline {
         }
         failure {
             echo 'Échec de la pipeline'
-            sh 'docker compose logs || true'
+            sh 'docker compose logs '
         }
     }
 }

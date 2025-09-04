@@ -19,7 +19,7 @@ pipeline {
                 sh 'docker compose -f Docker-compose.yml up -d'
 
                 echo 'Vérification du statut des conteneurs...'
-                sh 'docker compose ps'
+                sh 'docker compose -f Docker-compose.yml ps'
             }
         }
     }

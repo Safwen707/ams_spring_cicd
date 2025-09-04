@@ -17,13 +17,13 @@ pipeline {
         stage('Lancement de la stack Docker-compose') {
             steps {
                 echo 'Arrêt de la stack existante...'
-                sh 'docker compose -f docker-compose.yml down || true'
+                sh 'docker compose -f Docker-compose.yml down || true'
 
                 echo 'Démarrage de la nouvelle stack...'
-                sh 'docker compose -f docker-compose.yml up -d'
+                sh 'docker compose -f Docker-compose.yml up -d'
 
                 echo 'Vérification du statut des conteneurs...'
-                sh 'docker compose -f docker-compose.yml ps'
+                sh 'docker compose -f Docker-compose.yml ps'
             }
         }
 
@@ -48,7 +48,7 @@ pipeline {
         failure {
             echo 'Échec de la pipeline'
             echo "====++++failed++++===="
-            sh 'docker compose -f docker-compose.yml logs || true'
+            sh 'docker compose -f Docker-compose.yml logs || true'
         }
     }
 }

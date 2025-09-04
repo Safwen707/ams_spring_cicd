@@ -31,12 +31,16 @@ pipeline {
             steps {
                 echo "tag and push image ..."
                 sh "docker tag safwen_amsdata_2025 safsaf707/safwen_amsdata_2025"
-                sh "docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW"
-                sh "docker push safsaf707/safwen_amsdata_2025"
-                sh "docker logout"
+
+                withCredentials([usernamePassword(credentialsId: 'safsafDockerHub',
+                                                usernameVariable: 'DOCKER_USER',
+                                                passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh "docker push safsaf707/safwen_amsdata_2025"
+                    sh "docker logout"
+                }
             }
         }
-    }
 
     post {
         success {

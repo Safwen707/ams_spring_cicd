@@ -5,10 +5,10 @@ version: '3.3'
 services:
   # spring service
   app:
-    image: mezghich_ams_2024
+    image: safwen_amsdata_2025
     ports:
-      - "8099:8080"
-    container_name: mezghich_ams_2024_cont
+      - "8082:8080"
+    container_name: safwen_amsdata_2025_cont
     depends_on:
       - db
     restart: always
@@ -17,14 +17,14 @@ services:
       SPRING_DATASOURCE_USERNAME: sip
       SPRING_DATASOURCE_PASSWORD: sip-ac2024
     networks:
-      - mezghich_net
+      - safwen_net
 
   # Database Service (Mysql)
   db:
     image: mysql:latest
     container_name: mysql_cont
     volumes:
-      - mezghich_db_ams_vol:/var/lib/mysql
+      - safwen_db_ams_vol:/var/lib/mysql
     restart: always
     environment:
       MYSQL_DATABASE: dbams2024
@@ -32,7 +32,7 @@ services:
       MYSQL_PASSWORD: sip-ac2024
       MYSQL_ROOT_PASSWORD: root
     networks:
-      - mezghich_net
+      - safwen_net
 
   # phpmyadmin Service
   phpmyadmin:
@@ -42,17 +42,17 @@ services:
       - db
     restart: always
     ports:
-      - 8088:80
+      - 8083:80
     environment:
       - PMA_ARBITRARY=1
     networks:
-      - mezghich_net
+      - safwen_net
 
 # Dec
 volumes:
-  mezghich_db_ams_vol:
+  safwen_db_ams_vol:
 
 networks:
-  mezghich_net:
+  safwen_net:
 
 

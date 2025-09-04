@@ -1,20 +1,38 @@
 pipeline {
     agent any
     stages {
-        stage('Salutation à tout le monde devops') {
-            steps {
-                echo 'Bonjour tout le monde'
-            }
-        }
-        stage('Début du pipeline ...') {
-            steps {
-                echo 'Chargement'
-            }
-        }
         stage('Création image Docker') {
             steps {
-                sh 'docker build -t safwen_ams_2024 .'
+                echo 'Construction de l\'image Docker...'
+                // ✅ Commande corrigée avec -t pour le tag et . pour le contexte
+                sh 'docker build -t safwen_amsdata_2025 .'
+                echo 'Image créée avec succès'
             }
+        }
+        stage('Lancement de la stack Docker-compose') {
+            steps {
+                echo 'Arrêt de la stack existante...'
+                // ✅ Nom de fichier corrigé (sans majuscule)
+                sh 'docker compose -f Docker-compose.yml down '
+
+                echo 'Démarrage de la nouvelle stack...'
+                sh 'docker compose -f Docker-compose.yml up -d'
+
+                echo 'Vérification du statut des conteneurs...'
+                sh 'docker compose ps'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline exécutée avec succès!'
+            echo 'Application accessible sur: http://localhost:8099'
+            echo 'phpMyAdmin accessible sur: http://localhost:8088'
+        }
+        failure {
+            echo 'Échec de la pipeline'
+            sh 'docker compose logs || true'
         }
     }
 }

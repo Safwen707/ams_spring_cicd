@@ -37,7 +37,7 @@ services:
   # phpmyadmin Service
   phpmyadmin:
     image: phpmyadmin
-    container_name: pmadmin_cont
+    container_name: pmadmin_saf__cont
     depends_on:
       - db
     restart: always

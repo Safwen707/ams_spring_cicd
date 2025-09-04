@@ -7,7 +7,7 @@ services:
   app:
     image: safwen_amsdata_2025
     ports:
-      - "8082:8080"
+      - "8090:8080"
     container_name: safwen_amsdata_2025_cont
     depends_on:
       - db

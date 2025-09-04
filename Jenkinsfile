@@ -50,7 +50,7 @@ pipeline {
             echo "====++++success++++===="
         }
         failure {
-            echo 'Échec de la pipeline'
+            echo 'Échec de la pipelin'
             echo "====++++failed++++===="
             sh 'docker compose -f Docker-compose.yml logs || true'
         }

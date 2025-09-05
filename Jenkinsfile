@@ -12,7 +12,7 @@ pipeline {
         }
          stage('Lancement de la Stack Docker-Compose') {
                     steps {
-                        sh 'docker compose -f Docker-compose.yml down '
+                        sh 'docker compose -f Docker-compose.yml down'
                         sh 'docker compose -f Docker-compose.yml up -d'
                     }
          }
@@ -20,7 +20,7 @@ pipeline {
                      steps {
                          echo "tag and push image ..."
                          sh "docker tag safwen_amsdata_2025 safsaf707/safwen_amsdata_2025"
-                         sh "docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}""
+                         sh "docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW"
                          sh "docker push safsaf707/safwen_amsdata_2025"
                          sh "docker logout"
                      }

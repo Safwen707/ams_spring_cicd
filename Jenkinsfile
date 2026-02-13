@@ -5,7 +5,7 @@ pipeline {
     agent any
     stages {
 
-        stage('Création image Docker 32ghujjfjjjffff') {
+        stage('Création image Docker 32ghujjjhjfjjjffff') {
             steps {
                 sh 'docker build -t safwen_amsdata_2025 .'
             }

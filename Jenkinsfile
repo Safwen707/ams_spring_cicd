@@ -26,7 +26,7 @@ pipeline {
         // ═══════════════════════════════════════════════════════════════
         // 2. BUILD / COMPILE + AGENT 1
         // ═══════════════════════════════════════════════════════════════
-        stage('Build / Compile') {
+        stage('Build / Compile 1') {
             steps {
                 echo 'Maven clean compile...'
                 sh 'mvn clean compile'

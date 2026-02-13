@@ -5,23 +5,22 @@ version: '3.3'
 services:
   # spring service
   app:
-    image: safwen_amsdata_2025
+    image: ams_spring_app:latest
     ports:
-      - "8090:8080"
+      - "8091:8080"
     container_name: safwen_amsdata_2025_cont
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: always
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/dbams2024?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: sip
       SPRING_DATASOURCE_PASSWORD: sip-ac2024
-    networks:
-      - safwen_net
 
   # Database Service (Mysql)
   db:
-    image: mysql:latest
+    image: mysql:8.0
     container_name: mysql_cont
     volumes:
       - safwen_db_ams_vol:/var/lib/mysql
@@ -31,8 +30,10 @@ services:
       MYSQL_USER: sip
       MYSQL_PASSWORD: sip-ac2024
       MYSQL_ROOT_PASSWORD: root
-    networks:
-      - safwen_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      timeout: 20s
+      retries: 10
 
   # phpmyadmin Service
   phpmyadmin:
@@ -42,17 +43,13 @@ services:
       - db
     restart: always
     ports:
-      - 8083:80
+      - "8089:80"
     environment:
       - PMA_ARBITRARY=1
-    networks:
-      - safwen_net
 
-# Dec
+# Volumes
 volumes:
   safwen_db_ams_vol:
 
-networks:
-  safwen_net:
 
 

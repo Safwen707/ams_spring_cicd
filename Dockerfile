@@ -4,7 +4,7 @@ FROM maven:3.8.4-openjdk-17 AS build
 # Définir le répertoire de travail à /app dans le conteneur
 WORKDIR /app
 
-# Copier le fichier pom.xml et le répertoire src dans le conteneur
+# Copier le fichier pom.xml et le répertoire src dans le conteneur pour construire l'application
 COPY pom.xml .
 COPY src ./src
 
@@ -13,8 +13,8 @@ COPY src ./src
 # '-DskipTests' est utilisé pour ignorer les tests pendant la construction
 RUN mvn clean install -DskipTests
 
-# Utiliser l'image officielle OpenJDK comme étape d'exécution
-FROM openjdk:17-jdk-alpine
+# Utiliser l'image officielle Eclipse Temurin (OpenJDK) comme étape d'exécution
+FROM eclipse-temurin:17-jre-alpine
 
 # Définir le répertoire de travail à /app dans le conteneur
 WORKDIR /app

@@ -20,7 +20,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Copier le fichier JAR exécutable de l'étape de construction à l'étape d'exécution
-# '/app/target/ams_data-0.0.1-SNAPSHOT.jar' est le fichier JAR généré par Maven
+# '/app/target/ams_data-0.0.1-SNAPSHOT.jar' est le fichier JAR généré par Maven il est important de vérifier le nom exact du fichier JAR généré dans le répertoire target
 COPY --from=build /app/target/amsmvc2024.jar .
 
 # Exposer le port sur lequel l'application sera à l'écoute

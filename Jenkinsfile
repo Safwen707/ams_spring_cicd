@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Agent URLs
         AGENT_MCP_URL = 'http://localhost:8083/mcp'
-        AGENT1_URL = 'http://localhost:8000'
+        AGENT1_URL = 'http://10.147.207.244:8000'
 
         // Retry counters
         AGENT1_RETRY = '0'

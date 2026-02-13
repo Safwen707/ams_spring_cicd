@@ -28,7 +28,7 @@ pipeline {
         // ═══════════════════════════════════════════════════════════════
         stage('Build / Compile 1') {
             steps {
-                echo 'Maven clean compile...'
+
                 sh 'mvn clean compile'
             }
             post {
@@ -81,7 +81,7 @@ pipeline {
                     }
                 }
                 success {
-                    echo 'Compilation reussie'
+                    echo 'Compilation reussie pas necessaire d\'appeler Agent 1'
                 }
             }
         }

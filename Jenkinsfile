@@ -5,10 +5,25 @@ pipeline {
         // Agent URLs
         AGENT_MCP_URL = 'http://localhost:8083/mcp'
         AGENT1_URL = 'http://10.147.207.244:8000'
+        AGENT2_URL = 'http://localhost:8001'  // Test Generator (a venir)
+        AGENT3_URL = 'http://localhost:8002'  // Sonar Optimizer (a venir)
 
         // Retry counters
         AGENT1_RETRY = '0'
         MAX_RETRY = '3'
+
+        // Coverage threshold
+        MIN_COVERAGE = '80'
+
+        // Repository info
+        REPO_OWNER = 'Safwen707'
+        REPO_NAME = 'springboot-user-service'
+
+        // Nexus configuration
+        NEXUS_URL = 'http://nexus.example.com/repository/maven-releases'
+
+        // Docker configuration
+        DOCKER_REGISTRY = 'safsaf707'
     }
 
     stages {
@@ -20,21 +35,25 @@ pipeline {
             steps {
                 echo 'Git checkout...'
                 checkout scm
+                script {
+                    env.GIT_COMMIT_SHORT = env.GIT_COMMIT.take(7)
+                }
+                echo "Commit: ${env.GIT_COMMIT_SHORT}"
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 2. BUILD / COMPILE + AGENT 1
+        // 2. BUILD / COMPILE + AGENT 1 (ERROR FIXER)
         // ═══════════════════════════════════════════════════════════════
-        stage('Build / Compile 1') {
+        stage('Build / Compile') {
             steps {
-
+                echo 'Build Maven - mvn clean compile'
                 sh 'mvn clean compile'
             }
             post {
                 failure {
                     script {
-                        echo 'Compilation echouee - Declenchement Agent 1...'
+                        echo 'Compilation echouee - Declenchement Agent 1 (Error Fixer)...'
 
                         // Boucle retry Agent 1
                         while (AGENT1_RETRY.toInteger() < MAX_RETRY.toInteger()) {
@@ -49,8 +68,8 @@ pipeline {
                                     -d '{
                                         "job_name": "${env.JOB_NAME}",
                                         "build_number": "${env.BUILD_NUMBER}",
-                                        "repo_owner": "Safwen707",
-                                        "repo_name": "springboot-user-service",
+                                        "repo_owner": "${REPO_OWNER}",
+                                        "repo_name": "${REPO_NAME}",
                                         "commit_sha": "${env.GIT_COMMIT}"
                                     }'
                                 """,
@@ -81,13 +100,37 @@ pipeline {
                     }
                 }
                 success {
-                    echo 'Compilation reussie pas necessaire d\'appeler Agent 1'
+                    echo 'Compilation reussie - Agent 1 non necessaire'
                 }
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 3. SONARQUBE ANALYSIS
+        // 3. TESTS UNITAIRES + COVERAGE
+        // ═══════════════════════════════════════════════════════════════
+        stage('Unit Tests & Coverage') {
+            steps {
+                echo 'Tests unitaires - mvn test'
+                echo 'Coverage - JaCoCo report'
+                echo 'Commande : mvn test jacoco:report'
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // 4. AGENT 2 - TEST GENERATOR (A VENIR)
+        // ═══════════════════════════════════════════════════════════════
+        stage('Agent 2 - Test Generator') {
+            steps {
+                echo 'Agent 2 - Test Generator (a venir)'
+                echo 'Objectif : Generer tests unitaires si coverage < 80%'
+                echo 'Technologie : JUnit + Mockito'
+                echo 'URL Agent 2 : ${AGENT2_URL}/generate-tests'
+                echo 'Status : NON OPERATIONNEL - En cours de developpement'
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // 5. SONARQUBE ANALYSIS
         // ═══════════════════════════════════════════════════════════════
         stage('SonarQube Analysis') {
             steps {
@@ -97,40 +140,32 @@ pipeline {
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 4. RUN SONAR AI AGENT
+        // 6. QUALITY GATE CHECK
         // ═══════════════════════════════════════════════════════════════
-        stage('Run Sonar AI Agent') {
+        stage('Quality Gate') {
             steps {
-                echo 'Agent 3 - Analyse rapport SonarQube...'
-                echo 'Commande : curl -X POST AGENT3_URL/optimize'
+                echo 'Quality Gate - Verification des seuils SonarQube'
+                echo 'Commande : waitForQualityGate'
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 5. GENERATE REPORT
+        // 7. AGENT 3 - SONAR OPTIMIZER (A VENIR)
         // ═══════════════════════════════════════════════════════════════
-        stage('Generate Report') {
+        stage('Agent 3 - Sonar Optimizer') {
             steps {
-                echo 'Generation rapport Agent 1...'
-                script {
-                    sh '''
-                        echo "=== RAPPORT PIPELINE - AGENT 1 ===" > pipeline_report.txt
-                        echo "Build: ${BUILD_NUMBER}" >> pipeline_report.txt
-                        echo "Commit: ${GIT_COMMIT}" >> pipeline_report.txt
-                        echo "Agent 1: Error Fixer (operationnel)" >> pipeline_report.txt
-                        echo "Agent 2: Test Generator (a venir)" >> pipeline_report.txt
-                        echo "Agent 3: Sonar Optimizer (a venir)" >> pipeline_report.txt
-                        echo "====================================" >> pipeline_report.txt
-                    '''
-                    archiveArtifacts artifacts: 'pipeline_report.txt', fingerprint: true
-                }
+                echo 'Agent 3 - Sonar Optimizer (a venir)'
+                echo 'Objectif : Analyser rapport SonarQube et suggerer optimisations'
+                echo 'Focus : Violations SOLID, bonnes pratiques, code smells'
+                echo 'URL Agent 3 : ${AGENT3_URL}/optimize'
+                echo 'Status : NON OPERATIONNEL - En cours de developpement'
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 6. PACKAGE (BASELINE)
+        // 8. PACKAGE (BASELINE)
         // ═══════════════════════════════════════════════════════════════
-        stage('Package (Baseline)') {
+        stage('Package') {
             steps {
                 echo 'Construction JAR baseline...'
                 echo 'Commande : mvn package -DskipTests'
@@ -138,41 +173,66 @@ pipeline {
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 7. PUBLISH JAR TO NEXUS
+        // 9. PUBLISH JAR TO NEXUS
         // ═══════════════════════════════════════════════════════════════
         stage('Publish JAR to Nexus') {
             steps {
                 echo 'Publication JAR vers Nexus...'
-                echo 'URL Nexus : http://nexus.example.com/repository/maven-releases'
-                echo 'Commande : mvn deploy:deploy-file -DgroupId=com.example -DartifactId=springboot-user-service'
-                echo 'Artifact : springboot-user-service-${BUILD_NUMBER}.jar'
+                echo 'URL Nexus : ${NEXUS_URL}'
+                echo 'Commande : mvn deploy:deploy-file -DgroupId=com.example -DartifactId=${REPO_NAME}'
+                echo 'Artifact : ${REPO_NAME}-${BUILD_NUMBER}.jar'
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 8. BUILD DOCKER IMAGE
+        // 10. BUILD DOCKER IMAGE
         // ═══════════════════════════════════════════════════════════════
         stage('Build Docker Image') {
             steps {
                 echo 'Build image Docker...'
-                echo 'Commande : docker build -t springboot-user-service:${BUILD_NUMBER} .'
-                echo 'Tags : springboot-user-service:${BUILD_NUMBER}, springboot-user-service:latest'
+                echo 'Commande : docker build -t ${REPO_NAME}:${BUILD_NUMBER} .'
+                echo 'Tags : ${REPO_NAME}:${BUILD_NUMBER}, ${REPO_NAME}:latest'
             }
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // 9. PUBLISH DOCKER IMAGE
+        // 11. PUBLISH DOCKER IMAGE TO DOCKERHUB
         // ═══════════════════════════════════════════════════════════════
-        stage('Publish Docker Image to DockerHub') {
+        stage('Publish Docker Image') {
             steps {
                 echo 'Push image Docker vers DockerHub...'
-                echo 'Registry : DockerHub (safsaf707)'
-                echo 'Commande : docker tag springboot-user-service:${BUILD_NUMBER} safsaf707/springboot-user-service:${BUILD_NUMBER}'
-                echo 'Commande : docker tag springboot-user-service:latest safsaf707/springboot-user-service:latest'
-                echo 'Commande : docker login -u USERNAME -p PASSWORD'
-                echo 'Commande : docker push safsaf707/springboot-user-service:${BUILD_NUMBER}'
-                echo 'Commande : docker push safsaf707/springboot-user-service:latest'
-                echo 'Commande : docker logout'
+                echo 'Registry : DockerHub (${DOCKER_REGISTRY})'
+                echo 'Commande : docker tag ${REPO_NAME}:${BUILD_NUMBER} ${DOCKER_REGISTRY}/${REPO_NAME}:${BUILD_NUMBER}'
+                echo 'Commande : docker tag ${REPO_NAME}:latest ${DOCKER_REGISTRY}/${REPO_NAME}:latest'
+                echo 'Commande : docker push ${DOCKER_REGISTRY}/${REPO_NAME}:${BUILD_NUMBER}'
+                echo 'Commande : docker push ${DOCKER_REGISTRY}/${REPO_NAME}:latest'
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // 12. GENERATE REPORT
+        // ═══════════════════════════════════════════════════════════════
+        stage('Generate Report') {
+            steps {
+                echo 'Generation rapport pipeline...'
+                script {
+                    sh '''
+                        echo "=== RAPPORT PIPELINE - AGENTS IA ===" > pipeline_report.txt
+                        echo "Build: ${BUILD_NUMBER}" >> pipeline_report.txt
+                        echo "Commit: ${GIT_COMMIT}" >> pipeline_report.txt
+                        echo "" >> pipeline_report.txt
+                        echo "=== AGENTS ===" >> pipeline_report.txt
+                        echo "Agent 1 (Error Fixer)     : OPERATIONNEL" >> pipeline_report.txt
+                        echo "Agent 2 (Test Generator)  : A VENIR" >> pipeline_report.txt
+                        echo "Agent 3 (Sonar Optimizer) : A VENIR" >> pipeline_report.txt
+                        echo "" >> pipeline_report.txt
+                        echo "=== STATISTIQUES ===" >> pipeline_report.txt
+                        echo "Agent 1 Tentatives: ${AGENT1_RETRY}/${MAX_RETRY}" >> pipeline_report.txt
+                        echo "" >> pipeline_report.txt
+                        echo "====================================" >> pipeline_report.txt
+                    '''
+                    archiveArtifacts artifacts: 'pipeline_report.txt', fingerprint: true
+                }
             }
         }
     }
@@ -182,10 +242,12 @@ pipeline {
     // ═══════════════════════════════════════════════════════════════
     post {
         success {
-            echo "PIPELINE SUCCESS (Agent 1 operationnel)"
+            echo "PIPELINE SUCCESS"
             echo "Build: ${env.BUILD_NUMBER}"
+            echo "Commit: ${env.GIT_COMMIT_SHORT}"
             echo "Agent 1 retry: ${AGENT1_RETRY}/${MAX_RETRY}"
-            echo "Agents 2 & 3: a venir"
+            echo "Agent 2: A VENIR"
+            echo "Agent 3: A VENIR"
         }
 
         failure {

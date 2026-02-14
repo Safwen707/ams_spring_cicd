@@ -10,7 +10,7 @@ pipeline {
 
         // Retry counters
         AGENT1_RETRY = '0'
-        MAX_RETRY = '3'
+        MAX_RETRY = '1'
 
         // Coverage threshold
         MIN_COVERAGE = '80'
@@ -80,14 +80,18 @@ pipeline {
                             def duration = endTime - startTime
 
                             // Affichage formaté de la réponse
-                            echo "${duration}ms"
+                            echo """
+${duration}ms
+
+```
+Agent 1 Response:
+
+commit aaamsDataApplication1 remplacez AAAmsDataApplication1 ligne 15 par AmsDataApplication
+branche bot et cree avec commit1
+```
 
 
-                            echo "Agent 1 Response:"
-                            echo "commit aaamsDataApplication1 remplacez AAAmsDataApplication1 ligne 15 par AmsDataApplication"
-                            echo "branche bot est cree avec commit1"
-
-
+"""
 
                             writeFile file: "agent1_report_tentative_${AGENT1_RETRY}.json", text: response
 
@@ -105,7 +109,7 @@ pipeline {
                         }
 
                         if (AGENT1_RETRY.toInteger() >= MAX_RETRY.toInteger()) {
-                            error("Agent 1 - Echec apres ${MAX_RETRY} tentatives. Intervention humaine requise.")
+                            error("Agent 1 - Echec apres 1 tentative. Intervention humaine requise.")
                         }
                     }
                 }
@@ -237,7 +241,7 @@ pipeline {
                         echo "Agent 3 (Sonar Optimizer) : A VENIR" >> pipeline_report.txt
                         echo "" >> pipeline_report.txt
                         echo "=== STATISTIQUES ===" >> pipeline_report.txt
-                        echo "Agent 1 Tentatives: ${AGENT1_RETRY}/${MAX_RETRY}" >> pipeline_report.txt
+                        echo "Agent 1 Tentatives: ${AGENT1_RETRY}/3" >> pipeline_report.txt
                         echo "" >> pipeline_report.txt
                         echo "====================================" >> pipeline_report.txt
                     '''
@@ -255,7 +259,9 @@ pipeline {
             echo "PIPELINE SUCCESS"
             echo "Build: ${env.BUILD_NUMBER}"
             echo "Commit: ${env.GIT_COMMIT_SHORT}"
-
+            echo "Agent 1 retry: ${AGENT1_RETRY}/${MAX_RETRY}"
+            echo "Agent 2: A VENIR"
+            echo "Agent 3: A VENIR"
         }
 
         failure {

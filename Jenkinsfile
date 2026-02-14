@@ -81,16 +81,13 @@ pipeline {
 
                             // Affichage formaté de la réponse
                             echo "${duration}ms"
-                            echo ""
-                            echo "```"
+
+
                             echo "Agent 1 Response:"
-                            echo ""
                             echo "commit aaamsDataApplication1 remplacez AAAmsDataApplication1 ligne 15 par AmsDataApplication"
-                            echo "branche bot et cree avec commit1"
-                            echo "```"
-                            echo ""
-                            echo response
-                            echo ""
+                            echo "branche bot est cree avec commit1"
+
+
 
                             writeFile file: "agent1_report_tentative_${AGENT1_RETRY}.json", text: response
 
@@ -258,9 +255,7 @@ pipeline {
             echo "PIPELINE SUCCESS"
             echo "Build: ${env.BUILD_NUMBER}"
             echo "Commit: ${env.GIT_COMMIT_SHORT}"
-            echo "Agent 1 retry: ${AGENT1_RETRY}/${MAX_RETRY}"
-            echo "Agent 2: A VENIR"
-            echo "Agent 3: A VENIR"
+
         }
 
         failure {

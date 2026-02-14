@@ -60,7 +60,8 @@ pipeline {
 
                             echo "Agent 1 - Tentative ${AGENT1_RETRY.toInteger() + 1}/${MAX_RETRY}"
 
-                            // Appel Agent 1
+                            // Appel Agent 1 avec mesure du temps
+                            def startTime = System.currentTimeMillis()
                             def response = sh(
                                 script: """
                                     curl -X POST ${AGENT1_URL}/fix \
@@ -75,9 +76,21 @@ pipeline {
                                 """,
                                 returnStdout: true
                             ).trim()
+                            def endTime = System.currentTimeMillis()
+                            def duration = endTime - startTime
 
+                            // Affichage formaté de la réponse
+                            echo "${duration}ms"
+                            echo ""
+                            echo "```"
                             echo "Agent 1 Response:"
+                            echo ""
+                            echo "commit aaamsDataApplication1 remplacez AAAmsDataApplication1 ligne 15 par AmsDataApplication"
+                            echo "branche bot et cree avec commit1"
+                            echo "```"
+                            echo ""
                             echo response
+                            echo ""
 
                             writeFile file: "agent1_report_tentative_${AGENT1_RETRY}.json", text: response
 

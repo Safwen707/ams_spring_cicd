@@ -12,7 +12,7 @@ public class AmsDataApplication {
 	public static void main(String[] args) {
 		Etudiant e = new Etudiant();
 		new File(ArticleController.uploadDirectory).mkdir();  //création du dossier sous static
-		SpringApplication.run(amsDataApplication.class, args);
+		SpringApplication.run(AAAmsDataApplication.class, args);
 		System.out.println("");
 
 	}

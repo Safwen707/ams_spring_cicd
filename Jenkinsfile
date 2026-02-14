@@ -87,7 +87,7 @@ ${duration}ms
 Agent 1 Response:
 
 commit aaamsDataApplication1 remplacez AAAmsDataApplication1 ligne 15 par AmsDataApplication
-branche bot et cree avec commit1
+branche bot est crée avec commit1
 ```
 
 
